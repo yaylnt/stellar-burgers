@@ -12,3 +12,7 @@
 .text {
   color: #8585ad;
 }
+
+.container {
+  padding: 120px 100px;
+}
