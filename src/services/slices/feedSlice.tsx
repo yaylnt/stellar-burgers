@@ -32,24 +32,22 @@ const initialState: IFeedState = {
 
 export const getFeed = createAsyncThunk(
   'feed/getFeed',
-  async (_, { dispatch, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     const res = await getFeedsApi();
     if (!res.success) {
       return rejectWithValue(res);
     }
-    dispatch(setFeed(res));
     return res;
   }
 );
 
 export const getOrderByNumber = createAsyncThunk(
   'feed/getOrderByNumber',
-  async (orderNumber: number, { dispatch, rejectWithValue }) => {
+  async (orderNumber: number, { rejectWithValue }) => {
     const res = await getOrderByNumberApi(orderNumber);
     if (!res.success) {
       return rejectWithValue(res);
     }
-    dispatch(setViewOrder(res.orders[0]));
     return res.orders[0];
   }
 );
@@ -57,16 +55,7 @@ export const getOrderByNumber = createAsyncThunk(
 export const feedSlice = createSlice({
   name: 'feed',
   initialState,
-  reducers: {
-    setFeed: (state, action: PayloadAction<TFeedsResponse>) => {
-      state.feed.orders = action.payload.orders;
-      state.feed.total = action.payload.total;
-      state.feed.totalToday = action.payload.totalToday;
-    },
-    setViewOrder: (state, action: PayloadAction<TOrder>) => {
-      state.viewOrder = action.payload;
-    }
-  },
+  reducers: {},
   selectors: {
     feedSelector: (state) => state.feed,
     viewOrderSelector: (state) => state.viewOrder,
@@ -80,9 +69,15 @@ export const feedSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(getFeed.fulfilled, (state) => {
-        state.isLoading = false;
-      })
+      .addCase(
+        getFeed.fulfilled,
+        (state, action: PayloadAction<TFeedsResponse>) => {
+          state.isLoading = false;
+          state.feed.orders = action.payload.orders;
+          state.feed.total = action.payload.total;
+          state.feed.totalToday = action.payload.totalToday;
+        }
+      )
       .addCase(getFeed.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || 'Failed to fetch feed';
@@ -91,9 +86,13 @@ export const feedSlice = createSlice({
         state.error = null;
         state.orderRequest = true;
       })
-      .addCase(getOrderByNumber.fulfilled, (state) => {
-        state.orderRequest = false;
-      })
+      .addCase(
+        getOrderByNumber.fulfilled,
+        (state, action: PayloadAction<TOrder>) => {
+          state.orderRequest = false;
+          state.viewOrder = action.payload;
+        }
+      )
       .addCase(getOrderByNumber.rejected, (state, action) => {
         state.orderRequest = false;
         state.error = action.error.message || 'Failed to fetch order';
@@ -101,7 +100,6 @@ export const feedSlice = createSlice({
   }
 });
 
-export const { setFeed, setViewOrder } = feedSlice.actions;
 export const {
   feedSelector,
   viewOrderSelector,

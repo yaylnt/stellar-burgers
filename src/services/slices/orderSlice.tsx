@@ -31,12 +31,11 @@ const initialState: IOrdersState = {
 
 export const orderBurger = createAsyncThunk(
   'orders/orderBurger',
-  async (ingredients: string[], { dispatch, rejectWithValue }) => {
+  async (ingredients: string[], { rejectWithValue }) => {
     const res = await orderBurgerApi(ingredients);
     if (!res.success) {
       return rejectWithValue(res);
     }
-    dispatch(setOrderDetails(res.order));
     return res.order;
   }
 );
@@ -78,14 +77,6 @@ export const orderSlice = createSlice({
         state.constructorItems.ingredients.splice(action.payload + 1, 1)[0]
       );
     },
-    setOrderDetails: (state, action: PayloadAction<TOrder>) => {
-      state.orderModalData = action.payload;
-      state.orderRequest = false;
-      state.constructorItems = {
-        bun: null,
-        ingredients: []
-      };
-    },
     sendOrderRequest: (state) => {
       state.orderRequest = true;
     },
@@ -106,9 +97,18 @@ export const orderSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(orderBurger.fulfilled, (state) => {
-        state.isLoading = false;
-      })
+      .addCase(
+        orderBurger.fulfilled,
+        (state, action: PayloadAction<TOrder>) => {
+          state.isLoading = false;
+          state.orderModalData = action.payload;
+          state.orderRequest = false;
+          state.constructorItems = {
+            bun: null,
+            ingredients: []
+          };
+        }
+      )
       .addCase(orderBurger.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || 'Ошибка размещения заказа';
@@ -122,7 +122,6 @@ export const {
   removeIngridient,
   moveIngredientUp,
   moveIngredientDown,
-  setOrderDetails,
   sendOrderRequest,
   clearOrderModal
 } = orderSlice.actions;

@@ -9,7 +9,7 @@ import {
   TRegisterData,
   TLoginData
 } from '../../utils/burger-api';
-import { setCookie, deleteCookie } from '../../utils/cookie';
+import { setCookie, deleteCookie, getCookie } from '../../utils/cookie';
 import { TOrder, TUser } from '../../utils/types';
 
 interface IUserState {
@@ -32,43 +32,37 @@ const initialState: IUserState = {
 
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
-  async (
-    { email, password, name }: TRegisterData,
-    { dispatch, rejectWithValue }
-  ) => {
+  async ({ email, password, name }: TRegisterData, { rejectWithValue }) => {
     const registrationData = await registerUserApi({ email, password, name });
     if (!registrationData.success) {
       return rejectWithValue(registrationData);
     }
     setCookie('accessToken', registrationData.accessToken);
     localStorage.setItem('refreshToken', registrationData.refreshToken);
-    dispatch(setUser(registrationData.user));
     return registrationData.user;
   }
 );
 
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
-  async ({ email, password }: TLoginData, { dispatch, rejectWithValue }) => {
+  async ({ email, password }: TLoginData, { rejectWithValue }) => {
     const loginData = await loginUserApi({ email, password });
     if (!loginData.success) {
       return rejectWithValue(loginData);
     }
     setCookie('accessToken', loginData.accessToken);
     localStorage.setItem('refreshToken', loginData.refreshToken);
-    dispatch(setUser(loginData.user));
     return loginData.user;
   }
 );
 
 export const logoutUser = createAsyncThunk(
   'auth/logoutUser',
-  async (_, { rejectWithValue, dispatch }) =>
+  async (_, { rejectWithValue }) =>
     logoutApi()
       .then((res) => {
         deleteCookie('accessToken');
         localStorage.removeItem('refreshToken');
-        dispatch(clearUser());
         return res;
       })
       .catch((error) => rejectWithValue(error))
@@ -77,33 +71,34 @@ export const logoutUser = createAsyncThunk(
 export const getUser = createAsyncThunk(
   'auth/getUser',
   async (_, { dispatch, rejectWithValue }) => {
+    if (!getCookie('accessToken')) {
+      dispatch(setAuthChecked());
+      return;
+    }
     const res = await getUserApi();
     if (!res.success) {
       return rejectWithValue(res);
     }
-    dispatch(setUser(res.user));
-    return res;
+    return res.user;
   }
 );
 
 export const updateUser = createAsyncThunk(
   'auth/updateUser',
-  async (user: Partial<TRegisterData>, { dispatch, rejectWithValue }) => {
+  async (user: Partial<TRegisterData>, { rejectWithValue }) => {
     const updatedUserData = await updateUserApi(user);
     if (!updatedUserData.success) {
       return rejectWithValue(updatedUserData);
     }
-    dispatch(setUser(updatedUserData.user));
     return updatedUserData.user;
   }
 );
 
 export const getUserOrders = createAsyncThunk(
   'orders/getUserOrders',
-  async (_, { dispatch, rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const res = await getOrdersApi();
-      dispatch(setUserOrders(res));
       return res;
     } catch (err) {
       return rejectWithValue(err);
@@ -125,6 +120,9 @@ export const userSlice = createSlice({
     },
     setUserOrders: (state, action: PayloadAction<TOrder[]>) => {
       state.orders = action.payload;
+    },
+    setAuthChecked: (state) => {
+      state.isAuthChecked = true;
     }
   },
   selectors: {
@@ -141,11 +139,16 @@ export const userSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(registerUser.fulfilled, (state) => {
-        state.isLoading = false;
-        state.isAuthChecked = true;
-        state.error = null;
-      })
+      .addCase(
+        registerUser.fulfilled,
+        (state, action: PayloadAction<TUser>) => {
+          state.isLoading = false;
+          state.isAuthChecked = true;
+          state.error = null;
+          state.user = action.payload;
+          state.isAuthenticated = true;
+        }
+      )
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
         state.isAuthChecked = true;
@@ -155,10 +158,12 @@ export const userSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(loginUser.fulfilled, (state) => {
+      .addCase(loginUser.fulfilled, (state, action: PayloadAction<TUser>) => {
         state.isLoading = false;
         state.isAuthChecked = true;
         state.error = null;
+        state.user = action.payload;
+        state.isAuthenticated = true;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -169,11 +174,18 @@ export const userSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(getUser.fulfilled, (state) => {
-        state.isLoading = false;
-        state.isAuthChecked = true;
-        state.error = null;
-      })
+      .addCase(
+        getUser.fulfilled,
+        (state, action: PayloadAction<TUser | undefined>) => {
+          state.isLoading = false;
+          state.isAuthChecked = true;
+          state.error = null;
+          if (action.payload) {
+            state.user = action.payload;
+            state.isAuthenticated = true;
+          }
+        }
+      )
       .addCase(getUser.rejected, (state, action) => {
         state.isLoading = false;
         state.isAuthChecked = true;
@@ -183,9 +195,10 @@ export const userSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(updateUser.fulfilled, (state) => {
+      .addCase(updateUser.fulfilled, (state, action: PayloadAction<TUser>) => {
         state.isLoading = false;
         state.error = null;
+        state.user = action.payload;
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -199,6 +212,8 @@ export const userSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.isLoading = false;
         state.error = null;
+        state.user = null;
+        state.isAuthenticated = false;
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -208,10 +223,14 @@ export const userSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(getUserOrders.fulfilled, (state) => {
-        state.isLoading = false;
-        state.error = null;
-      })
+      .addCase(
+        getUserOrders.fulfilled,
+        (state, action: PayloadAction<TOrder[]>) => {
+          state.isLoading = false;
+          state.error = null;
+          state.orders = action.payload;
+        }
+      )
       .addCase(getUserOrders.rejected, (state, action) => {
         state.isLoading = false;
         state.error =
@@ -220,7 +239,7 @@ export const userSlice = createSlice({
   }
 });
 
-export const { setUser, clearUser, setUserOrders } = userSlice.actions;
+export const { setAuthChecked } = userSlice.actions;
 
 export const {
   authCheckedSelector,
