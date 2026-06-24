@@ -23,18 +23,13 @@ export const BurgerConstructor: FC = () => {
   const isAuth = useSelector(authenticatedSelector);
 
   const ingredients = constructorItems.ingredients.map((i) => i._id);
-  const bun = constructorItems.bun?._id;
-  let burger: string[];
-
-  if (bun) {
-    burger = [bun, ...ingredients, bun];
-  }
 
   const onOrderClick = () => {
     if (isAuth && constructorItems.bun) {
+      const bun: string = constructorItems.bun._id;
+      const burger: string[] = [bun, ...ingredients, bun];
       dispatch(sendOrderRequest());
       dispatch(orderBurger(burger));
-      dispatch(getFeed());
     } else if (isAuth && !constructorItems.bun) {
       return;
     } else if (!isAuth) {
