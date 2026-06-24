@@ -9,13 +9,13 @@ import {
 } from '../../services/slices/feedSlice';
 
 export const Feed: FC = () => {
-  const { orders, total, totalToday } = useSelector(feedSelector);
+  const { orders } = useSelector(feedSelector);
   const dispatch = useDispatch();
   const loading = useSelector(isLoadingSelector);
 
   useEffect(() => {
     dispatch(getFeed());
-  }, [dispatch, orders, total, totalToday]);
+  }, [dispatch]);
 
   if (!orders.length || loading) {
     return <Preloader />;
