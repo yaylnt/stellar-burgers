@@ -20,15 +20,14 @@ import {
   OrderInfo,
   ProtectedRoute
 } from '@components';
-import { Preloader } from '@ui';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { AppDispatch, useDispatch } from '../../services/store';
+import { useDispatch } from '../../services/store';
 import { useEffect } from 'react';
 import { getIngredients } from '../../services/slices/ingredientsSlice';
 import { getUser } from '../../services/slices/userSlice';
 
 const App = () => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useDispatch();
   const location = useLocation();
   const orderRegExp = /\d+/;
   const background = location.state?.background;
@@ -81,7 +80,7 @@ const App = () => {
         <Route
           path='/ingredients/:id'
           element={
-            <CenteringComponent title='Детали ингридиента'>
+            <CenteringComponent title='Детали ингредиента'>
               <IngredientDetails />
             </CenteringComponent>
           }

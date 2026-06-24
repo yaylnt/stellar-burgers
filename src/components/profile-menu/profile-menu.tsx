@@ -16,7 +16,7 @@ export const ProfileMenu: FC = () => {
     try {
       const result = await dispatch(logoutUser());
       if (result.meta?.requestStatus === 'fulfilled') {
-        navigate('/');
+        navigate('/login');
       }
     } finally {
       setIsLoggingOut(false);

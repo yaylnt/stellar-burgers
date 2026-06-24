@@ -9,11 +9,7 @@ type CenteringProps = {
 
 export const CenteringComponent: FC<CenteringProps> = memo(
   ({ title, children }) => {
-    const [style, setStyle] = useState('text_type_main-large');
-
-    useEffect(() => {
-      setStyle('text_type_digits-default');
-    }, []);
+    const style = 'text_type_digits-default';
 
     return (
       <>
