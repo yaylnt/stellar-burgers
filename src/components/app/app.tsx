@@ -20,7 +20,7 @@ import {
   OrderInfo,
   ProtectedRoute
 } from '@components';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from '../../services/store';
 import { useEffect } from 'react';
 import { getIngredients } from '../../services/slices/ingredientsSlice';
@@ -29,11 +29,12 @@ import { getUser } from '../../services/slices/userSlice';
 const App = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   const orderRegExp = /\d+/;
   const background = location.state?.background;
 
   const onClose = () => {
-    window.history.back();
+    navigate(-1);
   };
 
   useEffect(() => {
