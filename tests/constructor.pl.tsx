@@ -137,5 +137,8 @@ test.describe('Конструктор бургеров с HAR', () => {
     // Проверяем, что конструктор пустой после оформления заказа
     await expect(page.getByText('Выберите булки').first()).toBeVisible();
     await expect(page.getByText('Выберите начинку')).toBeVisible();
+
+    await context.clearCookies();
+    await page.evaluate(() => localStorage.clear());
   });
 });
