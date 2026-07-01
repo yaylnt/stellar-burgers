@@ -114,7 +114,7 @@ export type TNewOrder = {
 };
 
 type TNewOrderResponse = TServerResponse<{
-  order: TOrder;
+  order: TNewOrder;
   name: string;
 }>;
 
@@ -129,7 +129,10 @@ export const orderBurgerApi = (data: string[]) =>
       ingredients: data
     })
   }).then((data) => {
-    if (data?.success) return data;
+    if (data?.success) {
+      console.log(data);
+      return data;
+    }
     return Promise.reject(data);
   });
 
