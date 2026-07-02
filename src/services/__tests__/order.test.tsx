@@ -87,9 +87,12 @@ describe('Тест редьюсера слайса order', () => {
       }
     };
 
-    const bunId = sliceInitialState.constructorItems.ingredients[0].id;
+    const ingredientId = sliceInitialState.constructorItems.ingredients[0].id;
 
-    const newState = orderReducer(sliceInitialState, removeIngridient(bunId));
+    const newState = orderReducer(
+      sliceInitialState,
+      removeIngridient(ingredientId)
+    );
     expect(newState.constructorItems.ingredients).toEqual([]);
   });
 
