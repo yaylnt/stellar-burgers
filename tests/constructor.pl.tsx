@@ -1,14 +1,12 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Конструктор бургеров с HAR', () => {
-  test('Запись HAR-файла', async ({ page }) => {
-    // Начинаем запись HAR
+  test('Проверка отображения ингредиентов', async ({ page }) => {
     await page.routeFromHAR('./tests/hars/ingredients.har', {
       url: '**/api/ingredients',
       notFound: 'abort'
     });
     await page.goto('/');
-    // Проверяем, что список ингредиентов видим
     await expect(page.getByText('Флюоресцентная булка R2-D3')).toBeVisible();
   });
 
@@ -57,7 +55,10 @@ test.describe('Конструктор бургеров с HAR', () => {
       .filter({ hasText: 'Биокотлета из марсианской Магнолии' });
     await ingredient.getByRole('link').click();
     await expect(
-      page.getByTestId('modal').getByTestId('ingredient-details')
+      page
+        .getByTestId('modal')
+        .getByTestId('ingredient-details')
+        .getByText('Биокотлета из марсианской Магнолии')
     ).toBeVisible();
 
     // Модальное окно закрыто по кнопке
@@ -79,18 +80,9 @@ test.describe('Конструктор бургеров с HAR', () => {
       notFound: 'abort'
     });
 
-    await page.route('**/api/auth/user', (route) => {
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          success: true,
-          user: {
-            email: 'test@example.com',
-            name: 'Test User'
-          }
-        })
-      });
+    await page.routeFromHAR('./tests/hars/user.har', {
+      url: '**/api/auth/user',
+      notFound: 'abort'
     });
 
     await context.addCookies([
@@ -112,7 +104,7 @@ test.describe('Конструктор бургеров с HAR', () => {
     });
 
     await page.goto('/');
-    await expect(page.getByText('Test User')).toBeVisible();
+    await expect(page.getByText('BurgerOfMars')).toBeVisible();
 
     // Добавляем ингредиенты в конструктор
     const bun = page
