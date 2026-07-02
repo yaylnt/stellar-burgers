@@ -130,7 +130,6 @@ export const orderBurgerApi = (data: string[]) =>
     })
   }).then((data) => {
     if (data?.success) {
-      console.log(data);
       return data;
     }
     return Promise.reject(data);
