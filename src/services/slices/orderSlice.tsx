@@ -14,11 +14,11 @@ interface IOrdersState {
   };
   isLoading: boolean;
   orderRequest: boolean;
-  orderModalData: TOrder | null;
+  orderModalData: TNewOrder | null;
   error: string | null;
 }
 
-const initialState: IOrdersState = {
+export const initialState: IOrdersState = {
   constructorItems: {
     bun: null,
     ingredients: []
@@ -99,7 +99,7 @@ export const orderSlice = createSlice({
       })
       .addCase(
         orderBurger.fulfilled,
-        (state, action: PayloadAction<TOrder>) => {
+        (state, action: PayloadAction<TNewOrder>) => {
           state.isLoading = false;
           state.orderModalData = action.payload;
           state.orderRequest = false;
@@ -133,3 +133,5 @@ export const {
   orderDataSelector,
   errorSelector
 } = orderSlice.selectors;
+
+export default orderSlice.reducer;
