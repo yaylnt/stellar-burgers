@@ -11,7 +11,11 @@ const root = ReactDOMClient.createRoot(container!);
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter basename='/stellar-burgers'>
+      <BrowserRouter
+        basename={
+          process.env.NODE_ENV === 'production' ? '/stellar-burgers' : ''
+        }
+      >
         <App />
       </BrowserRouter>
     </Provider>
