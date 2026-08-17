@@ -1,9 +1,11 @@
-import ingredientsReducer, { getIngredients, initialState } from '../slices/ingredientsSlice';
+import ingredientsReducer, {
+  getIngredients,
+  initialState
+} from '../slices/ingredientsSlice';
 import { TIngredient } from '../../utils/types';
 import { expect, it, describe, jest } from '@jest/globals';
 
 describe('Тест редьюсера слайса ingredients', () => {
-
   it('Тест getIngredients.pending: должен включать isLoading и сбрасывать error', () => {
     const prevState = {
       ...initialState,
