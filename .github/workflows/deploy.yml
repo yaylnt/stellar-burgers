@@ -36,10 +36,20 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      - name: Check API variable
+        run: |
+          if [ -z "$BURGER_API_URL" ]; then
+            echo "BURGER_API_URL is NOT set"
+            exit 1
+          fi
+          echo "BURGER_API_URL is set"
+        env:
+          BURGER_API_URL: ${{ vars.BURGER_API_URL }}
+
       - name: Run Playwright tests
         run: npm run pl
         env:
-          BURGER_API_URL: https://norma.education-services.ru/api
+          BURGER_API_URL: ${{ vars.BURGER_API_URL }}
 
   build:
     needs: test
@@ -61,7 +71,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          BURGER_API_URL: https://norma.education-services.ru/api
+          BURGER_API_URL: ${{ vars.BURGER_API_URL }}
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
