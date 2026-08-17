@@ -38,6 +38,8 @@ jobs:
 
       - name: Run Playwright tests
         run: npm run pl
+        env:
+          BURGER_API_URL: ${{ vars.BURGER_API_URL }}
 
   build:
     needs: test
