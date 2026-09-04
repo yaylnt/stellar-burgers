@@ -36,11 +36,6 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Build
-        run: npm run build
-        env:
-          BURGER_API_URL: ${{ vars.BURGER_API_URL }}
-
       - name: Run Playwright tests
         run: npm run pl
         env:
