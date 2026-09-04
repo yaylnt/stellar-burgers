@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - main
-      - ci-debug          # временно для дебага
-  workflow_dispatch:      # можно запустить вручную
+  workflow_dispatch:
 
 permissions:
   contents: read
