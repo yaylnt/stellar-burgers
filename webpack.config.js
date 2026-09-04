@@ -2,6 +2,7 @@ const path = require('path');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: path.resolve(__dirname, './src/index.tsx'),
@@ -56,6 +57,16 @@ module.exports = {
     }),
     new Dotenv({
       systemvars: true
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: 'public',
+          globOptions: {
+            ignore: ['**/index.html']
+          }
+        }
+      ]
     })
   ],
   resolve: {
