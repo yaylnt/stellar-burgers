@@ -1,104 +1,97 @@
-# Stellar Burgers — космическая бургерная
+**English** | [Русский](/README.ru.md)
 
-Stellar Burgers — SPA на React + TypeScript, в котором пользователь может собрать собственный бургер, оформить заказ, просматривать ленту и историю заказов, а также управлять профилем.
+# Stellar Burgers — a Space Burger Joint
+
+Stellar Burgers is a SPA built with React + TypeScript where users can assemble their own burger, place an order, browse the order feed and their order history, and manage their profile.
 
 ## 💻[Demo](https://yaylnt.github.io/stellar-burgers/)
 
-## Возможности
+Order feed and burger constructor
 
-- конструктор бургера с добавлением, удалением и сортировкой ингредиентов;
-- оформление заказа авторизованным пользователем;
-- регистрация, авторизация и восстановление доступа;
-- защищённые маршруты и личный кабинет;
-- лента заказов и история заказов пользователя;
-- просмотр ингредиентов и заказов через модальные окна;
-- редактирование данных профиля;
-- обработка состояний загрузки и ошибок при работе с API.
+https://github.com/user-attachments/assets/5fc587e9-9da9-4485-89ad-072cb6bfbe16
 
-## Стек
+Registration
 
-<table>
-  <tr>
-    <td valign="top">
+https://github.com/user-attachments/assets/b3e99581-e528-47fc-b26b-7036ee5f01c0
 
-- React
-- TypeScript
-- Redux Toolkit
-- React Router
-- Jest
-- Playwright
-- Webpack
-- GitHub Actions
+Order process
 
-    </td>
-    <td valign="middle" align="center">
-      <img
-        src="https://skillicons.dev/icons?i=ts,react,redux,webpack,jest"
-        alt="Technology stack"
-      />
-    </td>
-  </tr>
-</table>
+https://github.com/user-attachments/assets/a66bbf8c-dee1-4989-9157-03c6fbb364fa
 
-## Мой вклад в проект
+## Features
 
-* Реализовала маршрутизацию на React Router, включая динамические и защищённые маршруты, страницу 404 и modal routing.
-* Реализовала авторизацию и защиту приватных маршрутов с использованием access/refresh token.
-* Построила глобальное состояние приложения на Redux Toolkit: slices, selectors и асинхронные `createAsyncThunk`.
-* Реализовала логику конструктора бургера, оформления заказа, ленты и истории заказов.
-* Реализовала работу с профилем пользователя: загрузку, редактирование и сохранение данных.
-* Написала unit-тесты на Jest и интеграционные тесты на Playwright; для e2e-тестов использовала HAR-моки API и тестовую авторизацию.
-* Настроила CI/CD через GitHub Actions: lint, TypeScript type-check, тесты, production build и автоматический deployment на GitHub Pages.
+- burger constructor with adding, removing and reordering ingredients;
+- order placement for authenticated users;
+- registration, login and password recovery;
+- protected routes and a personal account area;
+- order feed and the user's order history;
+- viewing ingredients and orders in modal windows;
+- editing profile data;
+- handling loading and error states when working with the API.
 
+## Tech Stack
 
-## Тестирование
+| React<br>TypeScript<br>Redux Toolkit<br>React Router<br>Jest<br>Playwright<br>Webpack<br>GitHub Actions | [![Technology stack](https://skillicons.dev/icons?i=ts,react,redux,webpack,jest)](https://skillicons.dev/icons?i=ts,react,redux,webpack,jest) |
+| ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+
+## My Contribution
+
+- Implemented routing with React Router, including dynamic and protected routes, a 404 page and modal routing.
+- Implemented authentication and protection of private routes using access/refresh tokens.
+- Built the global application state with Redux Toolkit: slices, selectors and asynchronous `createAsyncThunk` actions.
+- Implemented the logic of the burger constructor, order placement, the order feed and order history.
+- Implemented user profile handling: loading, editing and saving data.
+- Wrote unit tests with Jest and integration tests with Playwright; for the e2e tests I used HAR-based API mocks and test authentication.
+- Set up CI/CD with GitHub Actions: lint, TypeScript type-check, tests, production build and automatic deployment to GitHub Pages.
+
+## Testing
 
 ### Jest
 
-Тестируются Redux-редьюсеры и их состояния для синхронных и асинхронных actions.
+Redux reducers and their states are tested for both synchronous and asynchronous actions.
 
-```bash
+```
 npm test
 ```
 
-Для просмотра покрытия:
+To view coverage:
 
-```bash
+```
 npm run test:coverage
 ```
 
 ### Playwright
 
-Интеграционные тесты покрывают основные пользовательские сценарии конструктора и оформления заказа.
+Integration tests cover the main user scenarios of the constructor and order placement.
 
-```bash
+```
 npm run pl
 ```
 
-## Установка и запуск
+## Installation and Running
 
-Клонируйте репозиторий и установите зависимости:
+Clone the repository and install dependencies:
 
-```bash
+```
 npm install
 ```
 
-Создайте `.env` на основе `.env.example` и укажите URL API:
+Create a `.env` file based on `.env.example` and set the API URL:
 
-```env
+```
 BURGER_API_URL=...
 ```
 
-Запустите проект в режиме разработки:
+Start the project in development mode:
 
-```bash
+```
 npm run start
 ```
 
-Приложение будет доступно локально на `http://localhost:4000`.
+The app will be available locally at `http://localhost:4000`.
 
-## Production build
+## Production Build
 
-```bash
+```
 npm run build
 ```
